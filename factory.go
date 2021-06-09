@@ -1,4 +1,4 @@
-package main
+package GoCommand
 
 import (
 	"errors"
@@ -7,9 +7,9 @@ import (
 )
 
 type CommandFactory struct {
-	Name string
+	Name        string
 	Middlewares []components.Middleware
-	m *objects.CommandMap
+	m           *objects.CommandMap
 }
 
 func NewFactory(name string) *CommandFactory {
@@ -35,19 +35,19 @@ func (cf *CommandFactory) Handle(args []string) error {
 	}
 
 	args = args[len(cmd.Name):]
-	for _,middleware := range cf.Middlewares {
+	for _, middleware := range cf.Middlewares {
 		if !middleware.Continue(cmd) {
 			return errors.New("failed to pass middleware")
 		}
 	}
 
-	var b,ok bool
+	var b, ok bool
 	str := ""
-	var i,j int
+	var i, j int
 	var arguments []components.Argument
 	var parsed []interface{}
 
-	for index,syntax := range cmd.Syntaxes {
+	for index, syntax := range cmd.Syntaxes {
 		arguments = syntax.Arguments
 		if len(arguments) > len(args) {
 			continue
@@ -56,9 +56,9 @@ func (cf *CommandFactory) Handle(args []string) error {
 		b = true
 		j = 0
 		parsed = []interface{}{}
-		for _,argument := range arguments {
+		for _, argument := range arguments {
 			array := args[j:]
-			ok,i = argument.Check(array, parsed)
+			ok, i = argument.Check(array, parsed)
 			if !ok {
 				str = argument.Message(array)
 				b = false
@@ -81,5 +81,5 @@ func (cf *CommandFactory) Handle(args []string) error {
 		return errors.New(str)
 	}
 
-	return errors.New("usage: "+cmd.Syntaxes[0].Usage)
+	return errors.New("usage: " + cmd.Syntaxes[0].Usage)
 }
