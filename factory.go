@@ -1,4 +1,4 @@
-package GoCommand
+package main
 
 import (
 	"errors"
